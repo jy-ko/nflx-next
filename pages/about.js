@@ -1,6 +1,6 @@
 import Seo from "../components/Seo";
 
-export default function Home() {
+export default function About() {
   return (
     <>
       <Seo title="about"/>
