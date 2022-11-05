@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { motion, useAnimation, useScroll } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 
 const Nav = styled(motion.nav)`
@@ -12,9 +13,9 @@ const Nav = styled(motion.nav)`
   position: fixed;
   width: 100%;
   top: 0;
-  background-color: black;
   font-size: 14px;
   padding: 20px 60px;
+  color: white;
 `;
 
 const Col = styled.div`
@@ -36,7 +37,6 @@ const Logo = styled(motion.svg)`
 const Items = styled.ul`
   display: flex;
   align-items: center;
-  list-style: none;
 `;
 
 const Item = styled.li`
@@ -51,6 +51,15 @@ const Item = styled.li`
   justify-content: center;
   flex-direction: column;
 `;
+const Search = styled.form`
+  color: white;
+  display: flex;
+  align-items: center;
+  position: relative;
+  svg {
+    height: 25px;
+  }
+`;
 const Circle = styled(motion.span)`
   position: absolute;
   width: 5px;
@@ -63,16 +72,7 @@ const Circle = styled(motion.span)`
   background-color: red;
 `;
 
-const Search = styled.form`
-  color: white;
-  svg {
-    height: 24px;
-  }
-  left: -40px;
-  display: flex;
-  align-items: center;
-  position: relative;
-`;
+
 const Input = styled(motion.input)`
   transform-origin: right center;
   position: absolute;
@@ -85,7 +85,6 @@ const Input = styled(motion.input)`
   color: white;
 `;
 
-// framer motion variants
 const logoVariants = {
   normal: {
     fillOpacity: 1,
@@ -105,10 +104,12 @@ const navVariants = {
 };
 
 export default function Navbar() {
+  const router = useRouter()
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
   const { scrollY } = useScroll();
   const [searchOpen, setSearchOpen] = useState(false);
+
   const toggleSearch = () => {
     if (searchOpen) {
       inputAnimation.start({
@@ -131,9 +132,8 @@ export default function Navbar() {
     });
   }, [scrollY, navAnimation]);
   const { register, handleSubmit } = useForm();
-//   const navigate = useNavigate();
   const onValid = (data) => {
-    navigate(`/search?keyword=${data.keyword}`);
+    router.push(`/search?keyword=${data.keyword}`);
   };
 
   return (
@@ -153,14 +153,15 @@ export default function Navbar() {
         <Items>
           <Item>
             <Link href="/">Home</Link>
-            <Circle layoutId="circle" />
+            {router.pathname === "/" &&  <Circle layoutId="circle" />}
           </Item>
           <Item>
-            <Link href="/about">Movies</Link>
+            <Link href="/movies">Movies</Link>
+            {router.pathname === "/movies" &&  <Circle layoutId="circle" />}
           </Item>
         </Items>
-      </Col>
-      <Col>
+        </Col>
+        <Col>
         <Search onSubmit={handleSubmit(onValid)}>
           <motion.svg
             onClick={toggleSearch}
@@ -184,7 +185,7 @@ export default function Navbar() {
             placeholder="Search for a movie"
           />
         </Search>
-      </Col>
+        </Col>
     </Nav>
   );
 }
