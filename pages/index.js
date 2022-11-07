@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useRouter } from "next/router";
 import { makeImagePath } from "../utils";
+import { server } from '../config';
 
 const Wrapper = styled.div`
   background: black;
@@ -245,7 +246,7 @@ export default function Home({ results }) {
 
 export async function getServerSideProps() {
   const { results } = await (
-    await fetch(`http://localhost:3000/api/movies`)
+    await fetch(`${server}/api/movies`)
   ).json();
   return {
     props: {
