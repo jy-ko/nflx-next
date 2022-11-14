@@ -1,5 +1,7 @@
 # Nflx clone
 
+[Project Link](https://golden-churros-ea84b7.netlify.app/)
+
 ## Overview
 I built this app to explore NextJS, server-side rendering and to improve my react skills.
 
