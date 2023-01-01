@@ -132,9 +132,17 @@ export default function Navbar() {
       }
     });
   }, [scrollY, navAnimation]);
-  const { register, handleSubmit } = useForm();
-  const onValid = (data) => {
-    router.push(`/search?keyword=${data.keyword}`);
+  const { register } = useForm();
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const query = event.target[0].value
+    router.push({
+      pathname: `/search?keyword=${query}`, 
+      query: {
+        query
+      }
+    }, 
+    `/search?keyword=${query}`);
   };
 
   return (
@@ -165,7 +173,7 @@ export default function Navbar() {
         </Items>
         </Col>
         <Col>
-        <Search onSubmit={handleSubmit(onValid)}>
+        <Search onSubmit={handleSubmit}>
           <motion.svg
             onClick={toggleSearch}
             animate={{ x: searchOpen ? -155 : 0 }}
@@ -192,3 +200,4 @@ export default function Navbar() {
     </Nav>
   );
 }
+
