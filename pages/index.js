@@ -1,5 +1,5 @@
 import Seo from "../components/Seo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useRouter } from "next/router";
@@ -23,8 +23,10 @@ const Banner = styled.div`
   flex-direction: column;
   justify-content: center;
   padding: 60px;
-  background-image: url(${(props) => props.bgPhoto});
+  background-image: linear-gradient( rgba(0,0,0,.5), rgba(0,0,0,.5) ),
+  url(${(props) => props.bgPhoto});
   background-size: cover;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.8);
 `;
 const Title = styled.h2`
   font-size: 48px;
@@ -87,7 +89,7 @@ const Overlay = styled(motion.div)`
 
 const MovieModal = styled(motion.div)`
   position: absolute;
-  width: 40vw;
+  width: 50vw;
   height: 80vh;
   left: 0;
   right: 0;
@@ -150,10 +152,16 @@ const infoVariants = {
 const offset = 6;
 
 export default function Home({ results }) {
+
   const router = useRouter();
   const { scrollY } = useScroll();
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
+  const [windowWidth, setWindowWidth] = useState()
+
+  useEffect(() => 
+    setWindowWidth(window.outerWidth)
+  ,[])
 
   const increaseIndex = () => {
     if (results) {
@@ -186,27 +194,32 @@ export default function Home({ results }) {
         </Banner>
         <Slider>
           <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-            <Row>
-              {results
-                .slice(1)
-                .slice(offset * index, offset * index + offset)
-                .map((movie) => (
-                  <Box
-                    layoutId={movie.id + ""}
-                    key={movie.id}
-                    whileHover="hover"
-                    initial="normal"
-                    onClick={() => onBoxClicked(movie.id)}
-                    variants={boxVariants}
-                    bgPhoto={makeImagePath(movie.backdrop_path)}
-                    transition={{ type: "tween" }}
-                  >
-                    <Info variants={infoVariants}>
-                      <h4>{movie.title}</h4>
-                    </Info>
-                  </Box>
-                ))}
-            </Row>
+          <Row
+          initial={{ x: windowWidth +5}}
+          animate={{x: 0  }}
+          exit={{x: -windowWidth -5}}
+          transition={{ type: "tween", duration: 1 }}
+          key={index}
+        >
+        {results
+          .slice(1)
+          .slice(offset * index, offset * index + offset)
+          .map((movie) => (
+            <Box
+              layoutId={movie.id + ""}
+              key={movie.id}
+              whileHover="hover"
+              initial="normal"
+              onClick={() => onBoxClicked(movie.id)}
+              variants={boxVariants}
+              bgPhoto={makeImagePath(movie.backdrop_path)}
+            >
+              <Info variants={infoVariants}>
+                <h4>{movie.title}</h4>
+              </Info>
+            </Box>
+          ))}
+      </Row> 
           </AnimatePresence>
         </Slider>
         <AnimatePresence>
